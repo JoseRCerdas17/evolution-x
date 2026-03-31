@@ -1,59 +1,80 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 
-export default function Hero() {
+export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <section className="min-h-screen bg-dark flex flex-col items-center justify-center text-center px-6 pt-20">
+    <nav className="fixed top-0 left-0 w-full z-50 bg-dark/90 backdrop-blur-sm border-b border-dark-border">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
+        <div className="flex items-center justify-between h-16 md:h-20">
 
-      {/* Badge superior */}
-      <p className="text-gold text-xs tracking-[3px] mb-6 uppercase">
-        ✦ Excelencia desde el primer corte ✦
-      </p>
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2">
+            <span className="text-gold font-bold text-xl md:text-2xl tracking-widest uppercase">
+              Evolution <span className="text-white">X</span>
+            </span>
+          </Link>
 
-      {/* Título principal */}
-      <h1 className="text-white font-black uppercase leading-none text-4xl sm:text-6xl md:text-7xl lg:text-8xl">
-        Tu estilo,
-      </h1>
-      <h1 className="text-gold font-black uppercase italic leading-none text-4xl sm:text-6xl md:text-7xl lg:text-8xl mb-8">
-        Evolucionado
-      </h1>
+          {/* Links escritorio */}
+          <div className="hidden md:flex items-center gap-8">
+            <Link href="/servicios" className="text-white hover:text-gold transition-colors duration-300 text-sm uppercase tracking-wider">
+              Servicios
+            </Link>
+            <Link href="/galeria" className="text-white hover:text-gold transition-colors duration-300 text-sm uppercase tracking-wider">
+              Galería
+            </Link>
+            <Link href="/equipo" className="text-white hover:text-gold transition-colors duration-300 text-sm uppercase tracking-wider">
+              Equipo
+            </Link>
+            <Link href="/contacto" className="text-white hover:text-gold transition-colors duration-300 text-sm uppercase tracking-wider">
+              Contacto
+            </Link>
+            <Link href="/reservar" className="btn-gold text-sm uppercase tracking-wider">
+              Reservar
+            </Link>
+          </div>
 
-      {/* Descripción */}
-      <p className="text-gray-500 text-sm md:text-base max-w-sm sm:max-w-xl mx-auto leading-relaxed mb-10">
-        Grooming premium para el caballero moderno. Experimenta cortes de precisión
-        y tratamientos de lujo en un ambiente de distinción total.
-      </p>
+          {/* Botón hamburguesa */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden flex flex-col gap-1.5 p-2"
+          >
+            <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${isOpen ? "rotate-45 translate-y-2" : ""}`} />
+            <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${isOpen ? "opacity-0" : ""}`} />
+            <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${isOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+          </button>
 
-      {/* Botones */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-xs sm:max-w-none">
-        <Link href="/booking" className="btn-gold text-center uppercase tracking-widest text-sm px-8 py-4">
-          Reservar Cita
-        </Link>
-        <Link href="/services" className="btn-outline text-center uppercase tracking-widest text-sm px-8 py-4">
-          Ver Servicios
-        </Link>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mt-16 w-full max-w-xs sm:max-w-md">
-        <div className="text-center">
-          <p className="text-gold text-2xl sm:text-4xl font-black">5.0</p>
-          <p className="text-gray-600 text-[10px] tracking-[2px] uppercase mt-1">Google</p>
-        </div>
-
-        <div className="text-center border-x border-dark-border">
-          <p className="text-gold text-2xl sm:text-4xl font-black">15+</p>
-          <p className="text-gray-600 text-[10px] tracking-[2px] uppercase mt-1">Barberos</p>
-        </div>
-
-        <div className="text-center">
-          <p className="text-gold text-2xl sm:text-4xl font-black">10k+</p>
-          <p className="text-gray-600 text-[10px] tracking-[2px] uppercase mt-1">Clientes</p>
         </div>
       </div>
 
-      {/* Línea separadora */}
-      <div className="w-24 h-px bg-gold mt-16 opacity-50" />
-
-    </section>
+      {/* Menú móvil */}
+      <div className={`md:hidden transition-all duration-300 overflow-hidden ${isOpen ? "max-h-96" : "max-h-0"}`}>
+        <div className="flex flex-col px-4 pb-6 gap-4 bg-dark-card border-t border-dark-border">
+          <Link href="/servicios" onClick={() => setIsOpen(false)}
+            className="text-white hover:text-gold transition-colors py-2 uppercase tracking-wider text-sm">
+            Servicios
+          </Link>
+          <Link href="/galeria" onClick={() => setIsOpen(false)}
+            className="text-white hover:text-gold transition-colors py-2 uppercase tracking-wider text-sm">
+            Galería
+          </Link>
+          <Link href="/equipo" onClick={() => setIsOpen(false)}
+            className="text-white hover:text-gold transition-colors py-2 uppercase tracking-wider text-sm">
+            Equipo
+          </Link>
+          <Link href="/contacto" onClick={() => setIsOpen(false)}
+            className="text-white hover:text-gold transition-colors py-2 uppercase tracking-wider text-sm">
+            Contacto
+          </Link>
+          <Link href="/reservar" onClick={() => setIsOpen(false)}
+            className="btn-gold text-center uppercase tracking-wider text-sm">
+            Reservar
+          </Link>
+        </div>
+      </div>
+    </nav>
   );
 }
