@@ -1,8 +1,7 @@
 "use client";
 
-"use client";
-
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Calendar from "react-calendar";
 
 import Navbar from "../components/layout/Navbar";
@@ -41,9 +40,75 @@ export default function Reservar() {
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
   const [email, setEmail] = useState("");
+  const [cargando, setCargando] = useState(false);
+const [exito, setExito] = useState(false);
+const router = useRouter();
 
   const barbero = barberos.find((b) => b.id === barberoSeleccionado);
   const servicio = servicios.find((s) => s.id === servicioSeleccionado);
+  const confirmarReserva = async () => {
+    if (!nombre || !telefono || !email) {
+      alert("Por favor completa todos los campos");
+      return;
+    }
+    setCargando(true);
+    try {
+      const response = await fetch("http://localhost:8000/reservas/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre,
+          telefono,
+          email,
+          barbero: barbero?.nombre || "",
+          servicio: servicio?.nombre || "",
+          precio: servicio?.precio || "",
+          fecha: fechaSeleccionada ? fechaSeleccionada.toLocaleDateString("es-CR") : "",
+          hora: horarioSeleccionado || "",
+        }),
+      });
+      if (response.ok) {
+        setExito(true);
+      } else {
+        alert("Error al crear la reserva, intenta de nuevo");
+      }
+    } catch (error) {
+      alert("Error de conexión con el servidor");
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  if (exito) {
+    return (
+      <main>
+        <Navbar />
+        <div className="min-h-screen bg-dark flex items-center justify-center px-4">
+          <div className="bg-dark-card border border-gold rounded-lg p-8 max-w-md w-full text-center">
+            <div className="w-16 h-16 rounded-full bg-gold flex items-center justify-center mx-auto mb-6">
+              <span className="text-black font-black text-2xl">✓</span>
+            </div>
+            <h2 className="text-white font-black text-2xl uppercase mb-2">Cita Confirmada</h2>
+            <p className="text-gray-500 text-sm mb-6">
+              Tu cita ha sido agendada exitosamente. Te esperamos en Evolution X Barbershop.
+            </p>
+            <div className="bg-dark rounded-lg p-4 mb-6 text-left flex flex-col gap-2">
+              <p className="text-gray-500 text-xs uppercase tracking-wider">Resumen</p>
+              <p className="text-white text-sm"><span className="text-gold">Barbero:</span> {barbero?.nombre}</p>
+              <p className="text-white text-sm"><span className="text-gold">Servicio:</span> {servicio?.nombre}</p>
+              <p className="text-white text-sm"><span className="text-gold">Fecha:</span> {fechaSeleccionada?.toLocaleDateString("es-CR")}</p>
+              <p className="text-white text-sm"><span className="text-gold">Hora:</span> {horarioSeleccionado}</p>
+              <p className="text-white text-sm"><span className="text-gold">Total:</span> {servicio?.precio}</p>
+            </div>
+            <button onClick={() => router.push("/")} className="btn-gold w-full uppercase tracking-widest text-sm py-3">
+              Volver al inicio
+            </button>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
 
   return (
     <main>
@@ -173,8 +238,8 @@ export default function Reservar() {
                     Continuar
                   </button>
                 ) : (
-                  <button className="btn-gold text-xs uppercase tracking-widest px-6 py-3 ml-auto">
-                    Confirmar Cita
+                    <button onClick={confirmarReserva} disabled={cargando} className="btn-gold text-xs uppercase tracking-widest px-6 py-3 ml-auto disabled:opacity-50">
+                    {cargando ? "Enviando..." : "Confirmar Cita"}
                   </button>
                 )}
               </div>
