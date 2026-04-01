@@ -80,13 +80,13 @@ RESEND_API_KEY=tu-resend-api-key
 ## 📱 Capturas de pantalla
 
 ### Landing page
-![Landing page Evolution X]()
+![Captura de pantalla_1-4-2026_163246_evolution-x-eight.vercel.app.jpeg/landing]()
 
 ### Sistema de reservas
-![Sistema de reservas]()
+![Captura de pantalla_1-4-2026_163315_evolution-x-eight.vercel.app.jpeg/reserva]()
 
 ### Panel de administración
-![Panel de administración]()
+![Captura de pantalla_1-4-2026_163341_evolution-x-eight.vercel.app.jpeg/login admin]()
 
 ## 👨‍💻 Desarrollado por
 
