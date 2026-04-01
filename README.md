@@ -91,7 +91,7 @@ RESEND_API_KEY=tu-resend-api-key
 ## 👨‍💻 Desarrollado por
 
 José Roberto — Desarrollador Full Stack
-- GitHub: [@tu-usuario](https://github.com/tu-usuario)
+- GitHub: [@JoseRCerdas17](https://github.com/JoseRCerdas17)
 
 ## 📄 Licencia
 
