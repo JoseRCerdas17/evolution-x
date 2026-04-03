@@ -6,8 +6,8 @@ from routers import reservas, auth
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="Evolution X API",
-    description="API para la barberia Evolution X",
+    title="NobleCut API",
+    description="API para la barberia NobleCut",
     version="1.0.0"
 )
 
@@ -23,4 +23,4 @@ app.include_router(auth.router)
 
 @app.get("/")
 def root():
-    return {"message": "Evolution X API funcionando"}
+    return {"message": "NobleCut API funcionando"}

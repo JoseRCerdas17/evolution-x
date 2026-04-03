@@ -8,11 +8,11 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
 const barberos = [
-  { id: 1, nombre: "Kendall Facey", especialidad: "Master Barbero", iniciales: "KF" },
-  { id: 2, nombre: "Aryel López", especialidad: "Especialista en Fades", iniciales: "AL" },
-  { id: 3, nombre: "Dylan Díaz", especialidad: "Estilista de Barba", iniciales: "DD" },
-  { id: 4, nombre: "Alonso Lobo", especialidad: "Cortes Clásicos", iniciales: "ALo" },
-  { id: 5, nombre: "Eric Acuña", especialidad: "Tendencias Modernas", iniciales: "EA" },
+  { id: 1, nombre: "Marco Ricci", especialidad: "Senior Master Barber", iniciales: "MR" },
+  { id: 2, nombre: "Adrian Thorne", especialidad: "Especialista en Afeitado", iniciales: "AT" },
+  { id: 3, nombre: "James Soler", especialidad: "Director Creativo", iniciales: "JS" },
+  { id: 4, nombre: "Lucía Méndez", especialidad: "Hair Styling Expert", iniciales: "LM" },
+  { id: 5, nombre: "Dante Cruz", especialidad: "Especialista en Fade", iniciales: "DC" },
 ];
 
 const servicios = [
@@ -90,7 +90,7 @@ const router = useRouter();
             </div>
             <h2 className="text-white font-black text-2xl uppercase mb-2">Cita Confirmada</h2>
             <p className="text-gray-500 text-sm mb-6">
-              Tu cita ha sido agendada exitosamente. Te esperamos en Evolution X Barbershop.
+              Tu cita ha sido agendada exitosamente. Te esperamos en NobleCut Barbershop.
             </p>
             <div className="bg-dark rounded-lg p-4 mb-6 text-left flex flex-col gap-2">
               <p className="text-gray-500 text-xs uppercase tracking-wider">Resumen</p>

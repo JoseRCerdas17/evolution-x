@@ -46,8 +46,8 @@ export default function Login() {
       <div className="bg-dark-card border border-dark-border rounded-lg p-8 w-full max-w-md">
 
         <div className="text-center mb-8">
-          <span className="text-gold font-black text-2xl tracking-widest uppercase">
-            Evolution <span className="text-white">X</span>
+          <span className="text-white font-black text-2xl tracking-widest uppercase">
+            Noble<span className="text-gold">Cut</span>
           </span>
           <p className="text-gray-500 text-xs uppercase tracking-wider mt-2">
             Panel de Administración
@@ -91,7 +91,7 @@ export default function Login() {
         </div>
 
         <p className="text-gray-600 text-xs text-center mt-6">
-          Solo personal autorizado de Evolution X
+          Solo personal autorizado de NobleCut
         </p>
 
       </div>

@@ -1,96 +1,63 @@
 export default function Contacto() {
-  const horarios = [
-    { dia: "Lunes - Viernes", hora: "9:00am - 8:00pm" },
-    { dia: "Sabado", hora: "8:00am - 8:00pm" },
-    { dia: "Domingo", hora: "10:00am - 4:00pm" },
-  ];
-
   return (
-    <section className="bg-dark-card section-padding">
-      <div className="max-w-6xl mx-auto">
+    <section id="contacto" style={{ backgroundColor: "#1D4ED8" }} className="section-padding">
+      <div className="max-w-7xl mx-auto text-center">
 
-        <div className="text-center mb-16">
-          <p className="text-gold text-xs tracking-[4px] uppercase mb-4">
-            ✦ Estamos para servirte ✦
-          </p>
-          <h2 className="text-white font-black uppercase text-4xl md:text-5xl mb-4">
-            Donde <span className="text-gold italic">Encontrarnos</span>
-          </h2>
-          <p className="text-gray-500 text-sm max-w-md mx-auto">
-            Visitanos en Liberia, Guanacaste. También puedes escribirnos por WhatsApp.
-          </p>
-        </div>
+        {/* Badge */}
+        <p className="text-blue-200 text-xs tracking-[4px] uppercase mb-5">
+          ¿Te Apuntas?
+        </p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Título */}
+        <h2 className="text-white font-black uppercase leading-none text-4xl md:text-5xl lg:text-6xl mb-5">
+          ¿Listo para Elevar<br />tu Imagen?
+        </h2>
 
-          <div className="flex flex-col gap-6">
+        {/* Subtítulo */}
+        <p className="text-blue-200 text-sm max-w-xl mx-auto leading-relaxed mb-12">
+          Reserva tu espacio en la agenda de nuestros maestros y descubre por
+          qué somos la referencia del grooming masculino en la ciudad.
+        </p>
 
-            <div className="bg-dark border border-dark-border rounded-lg p-6 hover:border-gold transition-all duration-300">
-              <h3 className="text-gold font-bold text-xs tracking-[3px] uppercase mb-3">Ubicacion</h3>
-              <p className="text-white font-bold text-lg mb-1">Liberia, Guanacaste</p>
-              <p className="text-gray-500 text-sm">Costa Rica</p>
-            </div>
+        {/* Fila de acción */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 mb-12">
 
-            <div className="bg-dark border border-dark-border rounded-lg p-6 hover:border-gold transition-all duration-300">
-              <h3 className="text-gold font-bold text-xs tracking-[3px] uppercase mb-4">Horarios</h3>
-              <div className="flex flex-col gap-2">
-                {horarios.map((h) => (
-                  <div key={h.dia} className="flex justify-between items-center py-2 border-b border-dark-border">
-                    <span className="text-gray-400 text-sm">{h.dia}</span>
-                    <span className="text-white text-sm font-bold">{h.hora}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            
-            <a href="https://wa.me/50600000000" target="_blank" className="bg-dark border border-dark-border rounded-lg p-6 hover:border-gold transition-all duration-300 flex items-center justify-between group">
-              <div>
-                <h3 className="text-gold font-bold text-xs tracking-[3px] uppercase mb-1">WhatsApp</h3>
-                <p className="text-white font-bold">Escribenos ahora</p>
-                <p className="text-gray-500 text-sm">Respuesta rapida garantizada</p>
-              </div>
-              <div className="w-12 h-12 rounded-full border border-gold flex items-center justify-center group-hover:bg-gold transition-all duration-300">
-                <span className="text-gold group-hover:text-black font-bold text-lg">W</span>
-              </div>
-            </a>
-
+          {/* Teléfono */}
+          <div className="flex items-center gap-3 text-white">
+            <svg className="w-5 h-5 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            <span className="font-bold tracking-wide">+506 8888-8888</span>
           </div>
 
-          <div className="bg-dark border border-dark-border rounded-lg p-6">
-            <h3 className="text-white font-bold text-lg mb-6">Envianos un mensaje</h3>
-            <div className="flex flex-col gap-4">
-              <div>
-                <label className="text-gray-500 text-xs uppercase tracking-wider mb-2 block">Nombre completo</label>
-                <input
-                  type="text"
-                  placeholder="Tu nombre"
-                  className="w-full bg-dark-surface border border-dark-border rounded px-4 py-3 text-white text-sm focus:outline-none focus:border-gold transition-colors"
-                />
-              </div>
-              <div>
-                <label className="text-gray-500 text-xs uppercase tracking-wider mb-2 block">Telefono o WhatsApp</label>
-                <input
-                  type="tel"
-                  placeholder="8888-8888"
-                  className="w-full bg-dark-surface border border-dark-border rounded px-4 py-3 text-white text-sm focus:outline-none focus:border-gold transition-colors"
-                />
-              </div>
-              <div>
-                <label className="text-gray-500 text-xs uppercase tracking-wider mb-2 block">Mensaje</label>
-                <textarea
-                  placeholder="Escribe tu consulta aqui..."
-                  rows={4}
-                  className="w-full bg-dark-surface border border-dark-border rounded px-4 py-3 text-white text-sm focus:outline-none focus:border-gold transition-colors resize-none"
-                />
-              </div>
-              <button className="btn-gold w-full uppercase tracking-widest text-sm py-4">
-                Enviar Mensaje
-              </button>
-            </div>
+          {/* Botón CTA */}
+          <a
+            href="/reservar"
+            className="bg-white text-blue-700 font-black uppercase tracking-widest text-sm px-10 py-4 rounded hover:bg-blue-50 transition-colors duration-300"
+          >
+            Reservar Ahora
+          </a>
+
+          {/* Ubicación */}
+          <div className="flex items-center gap-3 text-white">
+            <svg className="w-5 h-5 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span className="font-bold tracking-wide">Liberia, Guanacaste</span>
           </div>
 
         </div>
+
+        {/* Horarios */}
+        <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 text-blue-200 text-xs tracking-wider">
+          <span>Lunes – Viernes: 9:00am – 8:00pm</span>
+          <span className="hidden sm:inline text-blue-400">|</span>
+          <span>Sábado: 8:00am – 8:00pm</span>
+          <span className="hidden sm:inline text-blue-400">|</span>
+          <span>Domingo: 10:00am – 4:00pm</span>
+        </div>
+
       </div>
     </section>
   );

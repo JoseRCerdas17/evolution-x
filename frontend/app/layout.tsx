@@ -8,7 +8,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Evolution X Barbershop",
+  title: "NobleCut Barbershop",
   description: "Barbería premium en Liberia, Guanacaste, Costa Rica.",
 };
 
