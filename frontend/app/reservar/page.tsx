@@ -33,6 +33,16 @@ function startOfDay(date: Date) {
   return normalized;
 }
 
+function getStoredValue(key: string) {
+  if (typeof window === "undefined") return "";
+  return localStorage.getItem(key) || "";
+}
+
+function setStoredValue(key: string, value: string) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(key, value);
+}
+
 export default function Reservar() {
   const [paso, setPaso] = useState(0);
   const [barberoSeleccionado, setBarberoSeleccionado] = useState<number | null>(null);
@@ -48,9 +58,9 @@ export default function Reservar() {
       .then((data) => setHorariosOcupados(Array.isArray(data) ? data : []))
       .catch(() => setHorariosOcupados([]));
   }, [fechaSeleccionada]);
-  const [nombre, setNombre] = useState(() => localStorage.getItem("cliente_nombre") || "");
-const [telefono, setTelefono] = useState(() => localStorage.getItem("cliente_telefono") || "");
-const [email, setEmail] = useState(() => localStorage.getItem("cliente_email") || "");
+  const [nombre, setNombre] = useState(() => getStoredValue("cliente_nombre"));
+const [telefono, setTelefono] = useState(() => getStoredValue("cliente_telefono"));
+const [email, setEmail] = useState(() => getStoredValue("cliente_email"));
   const [cargando, setCargando] = useState(false);
 const [exito, setExito] = useState(false);
 const router = useRouter();
@@ -70,9 +80,9 @@ const router = useRouter();
       alert("Por favor completa todos los campos");
       return;
     }
-    localStorage.setItem("cliente_nombre", nombre);
-localStorage.setItem("cliente_telefono", telefono);
-localStorage.setItem("cliente_email", email);
+    setStoredValue("cliente_nombre", nombre);
+setStoredValue("cliente_telefono", telefono);
+setStoredValue("cliente_email", email);
     setCargando(true);
     try {
         const response = await fetch(`${API}/reservas/`, {
