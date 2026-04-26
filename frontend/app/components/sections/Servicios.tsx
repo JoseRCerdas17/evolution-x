@@ -4,7 +4,7 @@ const servicios = [
     precio: "₡4,000",
     duracion: "30 min",
     descripcion: "Corte de cabello personalizado con las mejores herramientas con acabado premium y asesoría de imagen.",
-    imagen: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&q=80",
+    imagen: "/cliente3.jpeg",
     tag: "01",
   },
   {

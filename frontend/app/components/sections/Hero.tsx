@@ -10,9 +10,9 @@ export default function Hero() {
       <div className="flex-1 flex items-center relative pt-20">
 
         {/* Imagen de fondo derecha - solo desktop */}
-        <div className="absolute right-0 top-0 w-1/2 h-full hidden lg:block">
+        <div className="absolute right-0 top-30 w-1/2 h-full hidden lg:block">
           <img
-            src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1200&q=80"
+            src="/lobo3.jpeg"
             alt="Barbería Evolution X"
             className="w-full h-full object-cover"
           />
