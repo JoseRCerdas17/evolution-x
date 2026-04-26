@@ -1,10 +1,11 @@
 "use client";
 
+import { Suspense } from "react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export default function CancelarCita() {
+function CancelarContenido() {
   const [estado, setEstado] = useState<"cargando" | "exito" | "error" | "ya_cancelada">("cargando");
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
@@ -12,7 +13,7 @@ export default function CancelarCita() {
   const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
   useEffect(() => {
-    if (!id) { setEstado("error"); return; }
+    if (!id) return;
     fetch(`${API}/reservas/cancelar/${id}`)
       .then((res) => res.json())
       .then((data) => {
@@ -45,11 +46,6 @@ export default function CancelarCita() {
             <p className="text-gray-500 text-sm leading-relaxed mb-8">
               Tu cita ha sido cancelada exitosamente. El horario quedará disponible para otros clientes.
             </p>
-            <div className="bg-dark rounded-xl p-4 mb-8 border border-dark-border">
-              <p className="text-gray-500 text-xs leading-relaxed">
-                Si deseas reagendar tu cita puedes hacerlo en cualquier momento desde nuestra página web o contactándonos por WhatsApp.
-              </p>
-            </div>
             <div className="flex flex-col gap-3">
               <Link href="/reservar" className="btn-gold w-full uppercase tracking-widest text-sm py-3 block text-center">
                 Agendar Nueva Cita
@@ -86,7 +82,7 @@ export default function CancelarCita() {
           </>
         )}
 
-        {estado === "error" && (
+        {(!id || estado === "error") && (
           <>
             <div className="w-16 h-16 rounded-full bg-dark-surface border border-red-900 flex items-center justify-center mx-auto mb-6">
               <span className="text-2xl">✕</span>
@@ -115,5 +111,17 @@ export default function CancelarCita() {
 
       </div>
     </div>
+  );
+}
+
+export default function CancelarCita() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-dark flex items-center justify-center">
+        <div className="w-16 h-16 rounded-full border-2 border-gold border-t-transparent animate-spin" />
+      </div>
+    }>
+      <CancelarContenido />
+    </Suspense>
   );
 }

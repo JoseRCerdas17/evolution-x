@@ -27,6 +27,12 @@ const horarios = [
 const pasos = ["Barbero", "Servicio", "Fecha y Hora", "Confirmar"];
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+function startOfDay(date: Date) {
+  const normalized = new Date(date);
+  normalized.setHours(0, 0, 0, 0);
+  return normalized;
+}
+
 export default function Reservar() {
   const [paso, setPaso] = useState(0);
   const [barberoSeleccionado, setBarberoSeleccionado] = useState<number | null>(null);
@@ -48,6 +54,14 @@ const [email, setEmail] = useState(() => localStorage.getItem("cliente_email") |
   const [cargando, setCargando] = useState(false);
 const [exito, setExito] = useState(false);
 const router = useRouter();
+  const hoy = startOfDay(new Date());
+  const limiteSemana = new Date(hoy);
+  limiteSemana.setDate(hoy.getDate() + 7);
+  const estaFueraDeRango = (date: Date) => {
+    const fecha = startOfDay(date);
+    return fecha < hoy || fecha > limiteSemana;
+  };
+  const fechaDeshabilitada = (date: Date) => date.getDay() === 0 || estaFueraDeRango(date);
 
   const barbero = barberos.find((b) => b.id === barberoSeleccionado);
   const servicio = servicios.find((s) => s.id === servicioSeleccionado);
@@ -207,11 +221,12 @@ localStorage.setItem("cliente_email", email);
                     <Calendar
                     onChange={(value) => setFechaSeleccionada(value as Date)}
                     value={fechaSeleccionada}
-                    minDate={new Date()}
+                    minDate={hoy}
+                    maxDate={limiteSemana}
                     className="react-calendar-dark w-full"
                     locale="es-ES"
-                    tileDisabled={({ date }) => date.getDay() === 0}
-                    tileClassName={({ date }) => date.getDay() === 0 ? "domingo-deshabilitado" : ""}
+                    tileDisabled={({ date }) => fechaDeshabilitada(date)}
+                    tileClassName={({ date }) => fechaDeshabilitada(date) ? "domingo-deshabilitado" : ""}
                   />
                   </div>
                   <div className="mt-6">
