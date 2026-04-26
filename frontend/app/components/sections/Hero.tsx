@@ -22,9 +22,9 @@ export default function Hero() {
         {/* Imagen de fondo móvil */}
         <div className="absolute inset-0 lg:hidden">
           <img
-            src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800&q=80"
+            src="/lobo3.jpeg"
             alt="Barbería Evolution X"
-            className="w-full h-full object-cover opacity-15"
+            className="w-full h-full object-cover opacity-40"
           />
           <div className="absolute inset-0 bg-dark/80" />
         </div>
