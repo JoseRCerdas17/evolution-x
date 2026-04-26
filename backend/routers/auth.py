@@ -2,13 +2,14 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from auth.security import verificar_password, crear_token, verificar_token, hashear_password
 from pydantic import BaseModel
+import os
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD = hashear_password("evolution2026")
+ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
+ADMIN_PASSWORD = hashear_password(os.getenv("ADMIN_PASSWORD", "password_temporal"))
 
 class Token(BaseModel):
     access_token: str
