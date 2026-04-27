@@ -58,6 +58,30 @@ export default function Reservar() {
       .then((data) => setHorariosOcupados(Array.isArray(data) ? data : []))
       .catch(() => setHorariosOcupados([]));
   }, [fechaSeleccionada]);
+  
+  const esHorarioPasado = (hora: string) => {
+    if (!fechaSeleccionada) return false;
+    const hoy = new Date();
+    const fechaHoy = hoy.toLocaleDateString("es-CR");
+    const fechaCita = fechaSeleccionada.toLocaleDateString("es-CR");
+    if (fechaCita !== fechaHoy) return false;
+  
+    const partes = hora.split(" ");
+    const tiempo = partes[0].split(":");
+    let h = parseInt(tiempo[0]);
+    const m = parseInt(tiempo[1]);
+    const periodo = partes[1].toUpperCase();
+  
+    if (periodo === "PM" && h !== 12) h += 12;
+    if (periodo === "AM" && h === 12) h = 0;
+  
+    const citaDate = new Date();
+    citaDate.setHours(h, m, 0, 0);
+  
+    // Deshabilitar si faltan menos de 5 minutos
+    const diff = (citaDate.getTime() - hoy.getTime()) / 60000;
+    return diff < 5;
+  };
   const [nombre, setNombre] = useState(() => getStoredValue("cliente_nombre"));
 const [telefono, setTelefono] = useState(() => getStoredValue("cliente_telefono"));
 const [email, setEmail] = useState(() => getStoredValue("cliente_email"));
@@ -243,9 +267,20 @@ setStoredValue("cliente_email", email);
                     <label className="text-gray-500 text-xs uppercase tracking-wider mb-3 block">Horario disponible</label>
                     <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                       {horarios.map((h) => (
-                        <button key={h} onClick={() => !horariosOcupados.includes(h) && setHorarioSeleccionado(h)} disabled={horariosOcupados.includes(h)} className={`py-2 px-3 rounded-lg border text-xs font-bold transition-all duration-300 ${horariosOcupados.includes(h) ? "border-dark-border text-gray-700 cursor-not-allowed line-through" : horarioSeleccionado === h ? "border-gold bg-gold text-black" : "border-dark-border text-gray-400 hover:border-gold hover:text-gold"}`}>
-                        {h}
-                      </button>
+                       <button
+                       key={h}
+                       onClick={() => !horariosOcupados.includes(h) && !esHorarioPasado(h) && setHorarioSeleccionado(h)}
+                       disabled={horariosOcupados.includes(h) || esHorarioPasado(h)}
+                       className={`py-2 px-3 rounded-lg border text-xs font-bold transition-all duration-300 ${
+                         horariosOcupados.includes(h) || esHorarioPasado(h)
+                           ? "border-dark-border text-gray-700 cursor-not-allowed line-through"
+                           : horarioSeleccionado === h
+                           ? "border-gold bg-gold text-black"
+                           : "border-dark-border text-gray-400 hover:border-gold hover:text-gold"
+                       }`}
+                     >
+                       {h}
+                     </button>
                       ))}
                     </div>
                   </div>
