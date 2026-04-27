@@ -8,8 +8,12 @@ import os
 
 resend.api_key = os.getenv("RESEND_API_KEY")
 
-def enviar_recordatorio(nombre: str, email: str, servicio: str, precio: str, fecha: str, hora: str, tipo: str):
+def enviar_recordatorio(nombre: str, email: str, servicio: str, precio: str, fecha: str, hora: str, tipo: str, reserva_id: int):
     try:
+        maps_url = "https://maps.app.goo.gl/zcfrCQAJDv4KLDfb9"
+        whatsapp_url = "https://wa.me/50662009558"
+        frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
+        cancelar_url = f"{frontend_url}/cancelar?id={reserva_id}"
         asunto = "Recordatorio: Tu cita es mañana" if tipo == "24h" else "Recordatorio: Tu cita es en 1 hora"
         mensaje_tiempo = "mañana" if tipo == "24h" else "en 1 hora"
 
@@ -62,13 +66,38 @@ def enviar_recordatorio(nombre: str, email: str, servicio: str, precio: str, fec
 
     <div style="background:#1A1A1A;padding:20px 32px;border-left:3px solid #C9A035;border-bottom:1px solid #2A2A2A;">
       <p style="color:#888;font-size:13px;margin:0;line-height:1.6;">
-        📌 <strong style="color:#fff;">Recuerda:</strong> El pago se realiza al asistir. Si necesitas cancelar contáctanos por WhatsApp.
+        📌 <strong style="color:#fff;">Recuerda:</strong> El pago se realiza al asistir. Si necesitas cancelar contáctanos con anticipación.
       </p>
     </div>
 
+    <div style="background:#111;padding:32px;border-bottom:1px solid #2A2A2A;">
+      <p style="color:#C9A035;font-size:11px;letter-spacing:4px;text-transform:uppercase;margin:0 0 16px;">Cómo llegar</p>
+      <a href="{maps_url}" target="_blank" style="display:block;text-decoration:none;">
+        <div style="background:#1A1A1A;border:1px solid #2A2A2A;border-radius:8px;overflow:hidden;">
+          <div style="background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);height:140px;display:flex;align-items:center;justify-content:center;">
+            <div style="text-align:center;">
+              <div style="font-size:36px;margin-bottom:8px;">📍</div>
+              <p style="color:#C9A035;font-weight:bold;font-size:14px;margin:0;">Visionary Studio Barber Shop</p>
+              <p style="color:#888;font-size:12px;margin:4px 0 0;">Liberia, Guanacaste, Costa Rica</p>
+            </div>
+          </div>
+          <div style="background:#C9A035;text-align:center;padding:10px;">
+            <p style="color:#000;font-weight:900;font-size:12px;letter-spacing:2px;margin:0;text-transform:uppercase;">🗺 Abrir en Google Maps</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
     <div style="background:#111;padding:24px 32px;border-bottom:1px solid #2A2A2A;text-align:center;">
-      <a href="https://wa.me/50662009558" target="_blank" style="display:inline-block;background:#25D366;color:#fff;font-weight:bold;font-size:13px;padding:12px 24px;border-radius:4px;text-decoration:none;">
+      <a href="{whatsapp_url}" target="_blank" style="display:inline-block;background:#25D366;color:#fff;font-weight:bold;font-size:13px;padding:12px 24px;border-radius:4px;text-decoration:none;">
         💬 Contactar por WhatsApp
+      </a>
+    </div>
+
+    <div style="background:#1A1A1A;padding:24px 32px;border-bottom:1px solid #2A2A2A;text-align:center;">
+      <p style="color:#666;font-size:12px;margin:0 0 12px;">¿Necesitas cancelar tu cita?</p>
+      <a href="{cancelar_url}" target="_blank" style="display:inline-block;background:transparent;color:#888;font-size:11px;letter-spacing:2px;padding:8px 20px;border:1px solid #333;border-radius:4px;text-decoration:none;text-transform:uppercase;">
+        Cancelar mi cita
       </a>
     </div>
 
@@ -132,17 +161,17 @@ def verificar_recordatorios():
 
             # Recordatorio 24 horas antes (entre 23.5 y 24.5 horas)
             if 23 <= horas_restantes <= 25:
-                enviar_recordatorio(
-                    nombre=reserva.nombre,
-                    email=reserva.email,
-                    servicio=reserva.servicio,
-                    precio=reserva.precio,
-                    fecha=reserva.fecha,
-                    hora=reserva.hora,
-                    tipo="24h"
-                )
+              enviar_recordatorio(
+                  nombre=reserva.nombre,
+                  email=reserva.email,
+                  servicio=reserva.servicio,
+                  precio=reserva.precio,
+                  fecha=reserva.fecha,
+                  hora=reserva.hora,
+                  tipo="24h",
+                  reserva_id=reserva.id
+              )
 
-            # Recordatorio 1 hora antes (entre 0.5 y 1.5 horas)
             elif 50/60 <= horas_restantes <= 70/60:
                 enviar_recordatorio(
                     nombre=reserva.nombre,
@@ -151,7 +180,8 @@ def verificar_recordatorios():
                     precio=reserva.precio,
                     fecha=reserva.fecha,
                     hora=reserva.hora,
-                    tipo="1h"
+                    tipo="1h",
+                    reserva_id=reserva.id
                 )
 
     finally:
