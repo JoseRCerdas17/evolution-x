@@ -89,26 +89,29 @@ def enviar_recordatorio(nombre: str, email: str, servicio: str, precio: str, fec
 
 def parsear_fecha_hora(fecha: str, hora: str):
     try:
-        # fecha formato: d/m/yyyy, hora formato: H:MM AM/PM
         partes_fecha = fecha.split("/")
         dia = int(partes_fecha[0])
         mes = int(partes_fecha[1])
         anio = int(partes_fecha[2])
 
+        # Limpiar espacios extras
+        hora = hora.strip()
         partes_hora = hora.split(" ")
         tiempo = partes_hora[0].split(":")
         hora_num = int(tiempo[0])
         minuto_num = int(tiempo[1])
-        periodo = partes_hora[1]
+        periodo = partes_hora[1].strip().upper()
 
         if periodo == "PM" and hora_num != 12:
             hora_num += 12
         elif periodo == "AM" and hora_num == 12:
             hora_num = 0
 
-        return datetime(anio, mes, dia, hora_num, minuto_num)
+        resultado = datetime(anio, mes, dia, hora_num, minuto_num)
+        print(f"Fecha parseada: {resultado} para {fecha} {hora}")
+        return resultado
     except Exception as e:
-        print(f"Error parseando fecha/hora: {e}")
+        print(f"Error parseando fecha/hora '{fecha}' '{hora}': {e}")
         return None
 
 
@@ -125,9 +128,10 @@ def verificar_recordatorios():
 
             diferencia = cita_dt - ahora
             horas_restantes = diferencia.total_seconds() / 3600
+            print(f"Reserva {reserva.id}: {reserva.nombre} - Cita: {cita_dt} - Ahora: {ahora} - Horas restantes: {horas_restantes:.2f}")
 
             # Recordatorio 24 horas antes (entre 23.5 y 24.5 horas)
-            if 23.5 <= horas_restantes <= 24.5:
+            if 23 <= horas_restantes <= 25:
                 enviar_recordatorio(
                     nombre=reserva.nombre,
                     email=reserva.email,
@@ -139,7 +143,7 @@ def verificar_recordatorios():
                 )
 
             # Recordatorio 1 hora antes (entre 0.5 y 1.5 horas)
-            elif 0.5 <= horas_restantes <= 1.5:
+            elif 50/60 <= horas_restantes <= 70/60:
                 enviar_recordatorio(
                     nombre=reserva.nombre,
                     email=reserva.email,
