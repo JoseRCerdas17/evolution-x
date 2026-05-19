@@ -16,13 +16,17 @@ interface Reserva {
   hora: string;
   estado: string;
   metodo_pago: string | null;
+  cancelada_en: string | null;
 }
 
 const VISTAS = [
   { id: "lista", label: "Lista" },
   { id: "calendario", label: "Calendario" },
   { id: "ingresos", label: "Ingresos" },
+  { id: "canceladas", label: "Canceladas" },
 ] as const;
+
+const DIAS_RETENCION_CANCELADAS = 7;
 
 const PERIODOS_INGRESOS = [
   { id: "dia", label: "Hoy" },
@@ -41,7 +45,7 @@ export default function Admin() {
   const [cargando, setCargando] = useState(true);
   const [filtro, setFiltro] = useState("pendiente");
   const [busqueda, setBusqueda] = useState("");
-  const [vista, setVista] = useState<"lista" | "calendario" | "ingresos">("lista");
+  const [vista, setVista] = useState<"lista" | "calendario" | "ingresos" | "canceladas">("lista");
   const [modalReserva, setModalReserva] = useState<Reserva | null>(null);
   const [metodoPago, setMetodoPago] = useState<"sinpe" | "efectivo" | "mixto" | null>(null);
   const [montoPagoMetodo, setMontoPagoMetodo] = useState<string>("");
@@ -182,7 +186,8 @@ export default function Admin() {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
-    setReservas(reservas.filter((r) => r.id !== id));
+    const ahora = new Date().toISOString();
+    setReservas(reservas.map((r) => r.id === id ? { ...r, estado: "cancelada", cancelada_en: ahora } : r));
   };
 
   const eliminarReserva = async (id: number) => {
@@ -193,6 +198,15 @@ export default function Admin() {
       headers: { Authorization: `Bearer ${token}` },
     });
     setReservas(reservas.filter((r) => r.id !== id));
+  };
+
+  const restaurarReserva = async (id: number) => {
+    const token = localStorage.getItem("admin_token");
+    await fetch(`${API}/reservas/restaurar/${id}`, {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setReservas(reservas.map((r) => r.id === id ? { ...r, estado: "pendiente", cancelada_en: null } : r));
   };
 
   const cerrarSesion = () => { localStorage.removeItem("admin_token"); router.push("/login"); };
@@ -886,7 +900,7 @@ export default function Admin() {
             <div className="flex flex-col sm:flex-row gap-4 mb-2">
               <input type="text" placeholder="Buscar por nombre, teléfono o servicio..." value={busqueda} onChange={(e) => setBusqueda(e.target.value)} className="bg-dark-card border border-dark-border rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-gold transition-colors flex-1" />
               <div className="flex gap-2 flex-wrap">
-                {["todas", "pendiente", "confirmada", "cancelada"].map((f) => (
+                {["todas", "pendiente", "confirmada"].map((f) => (
                   <button key={f} onClick={() => setFiltro(f)} className={`text-xs uppercase tracking-widest px-4 py-2 rounded-full border transition-all duration-300 ${filtro === f ? "bg-gold text-black border-gold font-bold" : "border-dark-border text-gray-500 hover:border-gold"}`}>{f}</button>
                 ))}
               </div>
@@ -948,9 +962,92 @@ export default function Admin() {
             ))}
           </div>
 
+        ) : vista === "canceladas" ? (
+
+          /* Vista Canceladas */
+          (() => {
+            const limite = new Date(Date.now() - DIAS_RETENCION_CANCELADAS * 24 * 60 * 60 * 1000);
+            const canceladasVisibles = reservas
+              .filter((r) => r.estado === "cancelada")
+              .filter((r) => {
+                if (!r.cancelada_en) return true;
+                return new Date(r.cancelada_en) >= limite;
+              })
+              .sort((a, b) => {
+                const ta = a.cancelada_en ? new Date(a.cancelada_en).getTime() : 0;
+                const tb = b.cancelada_en ? new Date(b.cancelada_en).getTime() : 0;
+                return tb - ta;
+              });
+
+            const diasRestantes = (cancelada_en: string | null) => {
+              if (!cancelada_en) return DIAS_RETENCION_CANCELADAS;
+              const diff = Math.ceil((new Date(cancelada_en).getTime() + DIAS_RETENCION_CANCELADAS * 86400000 - Date.now()) / 86400000);
+              return Math.max(0, diff);
+            };
+
+            return (
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-gray-500 text-xs uppercase tracking-widest">
+                    {canceladasVisibles.length === 0 ? "Sin canceladas recientes" : `${canceladasVisibles.length} cancelada${canceladasVisibles.length !== 1 ? "s" : ""} — últimos ${DIAS_RETENCION_CANCELADAS} días`}
+                  </p>
+                </div>
+
+                {canceladasVisibles.length === 0 ? (
+                  <div className="text-center py-20 bg-dark-card border border-dark-border rounded-xl">
+                    <p className="text-gray-500">No hay reservas canceladas recientes</p>
+                  </div>
+                ) : canceladasVisibles.map((reserva) => {
+                  const restantes = diasRestantes(reserva.cancelada_en);
+                  return (
+                    <div key={reserva.id} className="bg-dark-card border border-red-900 rounded-xl p-6 opacity-80">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                          <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Cliente</p>
+                          <p className="text-white font-bold">{reserva.nombre}</p>
+                          <p className="text-gray-500 text-sm">{reserva.telefono}</p>
+                          <p className="text-gray-500 text-sm">{reserva.email}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Servicio</p>
+                          <p className="text-white font-bold">{reserva.servicio}</p>
+                          <p className="text-gold text-sm font-bold">{reserva.precio}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Cita</p>
+                          <p className="text-white font-bold">{reserva.fecha}</p>
+                          <p className="text-gray-500 text-sm">{reserva.hora}</p>
+                          {reserva.cancelada_en && (
+                            <p className="text-red-400 text-xs mt-1">
+                              Cancelada: {new Date(reserva.cancelada_en).toLocaleDateString("es-CR")}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <span className={`text-xs uppercase tracking-widest px-3 py-1 rounded-full text-center font-bold ${restantes <= 1 ? "bg-red-950 text-red-400" : "bg-red-900 text-red-300"}`}>
+                            {restantes === 0 ? "Expira hoy" : `${restantes}d restantes`}
+                          </span>
+                          <a href={`https://wa.me/506${reserva.telefono.replace(/[^0-9]/g, "")}`} target="_blank" className="text-xs uppercase tracking-widest px-3 py-1 rounded-full border border-green-700 text-green-400 hover:bg-green-900 transition-all duration-300 text-center">
+                            WhatsApp
+                          </a>
+                          <button onClick={() => restaurarReserva(reserva.id)} className="text-xs uppercase tracking-widest px-3 py-1 rounded-full border border-gold text-gold hover:bg-gold hover:text-black transition-all duration-300">
+                            Restaurar
+                          </button>
+                          <button onClick={() => eliminarReserva(reserva.id)} className="text-xs uppercase tracking-widest px-3 py-1 rounded-full border border-red-800 text-red-400 hover:bg-red-900 transition-all duration-300">
+                            Eliminar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })()
+
         ) : (
 
-          
+
           /* Vista Calendario */
 <div className="flex flex-col gap-6">
   <div className="bg-dark-card border border-dark-border rounded-xl p-6">

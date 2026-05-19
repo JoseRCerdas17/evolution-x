@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from database.connection import Base, engine, ensure_reserva_reminder_columns
+from database.connection import Base, engine, ensure_reserva_reminder_columns, ensure_cancelada_en_column
 from recordatorios import iniciar_scheduler, shutdown_scheduler
 from routers import auth, reservas
 
@@ -19,6 +19,7 @@ _ENV_REMINDER_OFF = frozenset({"1", "true", "yes", "on"})
 
 Base.metadata.create_all(bind=engine)
 ensure_reserva_reminder_columns()
+ensure_cancelada_en_column()
 
 
 @asynccontextmanager

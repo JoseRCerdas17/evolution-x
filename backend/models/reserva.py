@@ -19,3 +19,4 @@ class Reserva(Base):
     creado_en = Column(DateTime, default=datetime.utcnow)
     recordatorio_dia_previo_enviado = Column(Boolean, default=False, nullable=False)
     recordatorio_1h_enviado = Column(Boolean, default=False, nullable=False)
+    cancelada_en = Column(DateTime, nullable=True)

@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from emails import enviar_confirmacion_cliente
@@ -7,6 +8,8 @@ from database.connection import get_db
 from models.reserva import Reserva
 from pydantic import BaseModel
 from routers.auth import get_admin_actual
+
+DIAS_RETENCION_CANCELADAS = 7
 
 router = APIRouter(prefix="/reservas", tags=["reservas"])
 logger = logging.getLogger(__name__)
@@ -32,6 +35,7 @@ class ReservaResponse(BaseModel):
     fecha: str
     hora: str
     estado: str
+    cancelada_en: datetime | None = None
 
     class Config:
         from_attributes = True
@@ -158,6 +162,7 @@ def cancelar_por_link(reserva_id: int, db: Session = Depends(get_db)):
     if reserva.estado == "cancelada":
         return {"message": "La reserva ya fue cancelada"}
     reserva.estado = "cancelada"
+    reserva.cancelada_en = datetime.utcnow()
     db.commit()
     return {"message": "Reserva cancelada exitosamente"}
 
@@ -188,14 +193,43 @@ def cancelar_reserva(reserva_id: int, db: Session = Depends(get_db)):
     if not reserva:
         raise HTTPException(status_code=404, detail="Reserva no encontrada")
     reserva.estado = "cancelada"
+    reserva.cancelada_en = datetime.utcnow()
     db.commit()
     return {"message": "Reserva cancelada"}
 
+@router.patch("/restaurar/{reserva_id}", dependencies=[Depends(get_admin_actual)])
+def restaurar_reserva(reserva_id: int, db: Session = Depends(get_db)):
+    reserva = db.query(Reserva).filter(Reserva.id == reserva_id).first()
+    if not reserva:
+        raise HTTPException(status_code=404, detail="Reserva no encontrada")
+    if reserva.estado != "cancelada":
+        raise HTTPException(status_code=400, detail="Solo se pueden restaurar reservas canceladas")
+    reserva.estado = "pendiente"
+    reserva.cancelada_en = None
+    db.commit()
+    return {"message": "Reserva restaurada"}
+
+
 @router.delete("/eliminar/{reserva_id}")
-def eliminar_reserva(reserva_id: int, db: Session = Depends(get_db)):
+def eliminar_reserva(reserva_id: int, db: Session = Depends(get_db), _: str = Depends(get_admin_actual)):
     reserva = db.query(Reserva).filter(Reserva.id == reserva_id).first()
     if not reserva:
         raise HTTPException(status_code=404, detail="Reserva no encontrada")
     db.delete(reserva)
     db.commit()
     return {"message": "Reserva eliminada"}
+
+
+@router.delete("/limpiar-canceladas-viejas", dependencies=[Depends(get_admin_actual)])
+def limpiar_canceladas_viejas(db: Session = Depends(get_db)):
+    """Elimina reservas canceladas hace más de DIAS_RETENCION_CANCELADAS días."""
+    limite = datetime.utcnow() - timedelta(days=DIAS_RETENCION_CANCELADAS)
+    eliminadas = (
+        db.query(Reserva)
+        .filter(Reserva.estado == "cancelada", Reserva.cancelada_en <= limite)
+        .all()
+    )
+    for r in eliminadas:
+        db.delete(r)
+    db.commit()
+    return {"eliminadas": len(eliminadas)}

@@ -64,6 +64,24 @@ def ensure_reserva_reminder_columns():
                 )
             )
 
+def ensure_cancelada_en_column():
+    """Añade columna cancelada_en en bases existentes (SQLite / Postgres)."""
+    with engine.begin() as conn:
+        if _is_sqlite_url(DATABASE_URL):
+            rows = conn.execute(text("PRAGMA table_info(reservas)")).fetchall()
+            existing = {row[1] for row in rows}
+            if "cancelada_en" not in existing:
+                conn.execute(
+                    text("ALTER TABLE reservas ADD COLUMN cancelada_en TIMESTAMP")
+                )
+        else:
+            conn.execute(
+                text(
+                    "ALTER TABLE reservas ADD COLUMN IF NOT EXISTS cancelada_en TIMESTAMP"
+                )
+            )
+
+
 def get_db():
     db = SessionLocal()
     try:
